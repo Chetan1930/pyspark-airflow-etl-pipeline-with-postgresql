@@ -73,11 +73,11 @@ def load_to_postgres(customer_data, product_data):
     
     try:
         connection = psycopg2.connect(
-            host="postgres",
-            database="customer_analytics",
-            user="airflow",
-            password="airflow",
-            port="5432"
+            host=os.getenv("POSTGRES_HOST", "postgres"),
+            database=os.getenv("POSTGRES_ANALYTICS_DB", "customer_analytics"),
+            user=os.getenv("POSTGRES_USER", "pipeline"),
+            password=os.environ["POSTGRES_PASSWORD"],
+            port=os.getenv("POSTGRES_PORT", "5432"),
         )
         
         cursor = connection.cursor()

@@ -1,7 +1,7 @@
 FROM apache/airflow:2.8.1
 USER root
 
-# Install system dependencies with available Java version
+# Install Java for PySpark and the PostgreSQL client used by diagnostics.
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     openjdk-17-jre-headless \

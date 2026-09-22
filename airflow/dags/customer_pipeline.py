@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta
 from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
-from airflow.operators.bash_operator import BashOperator
+from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 import subprocess
 import os
 
 default_args = {
-    'owner': 'airflow',
+    'owner': 'chetan1930',
     'depends_on_past': False,
     'start_date': datetime(2023, 1, 1),
     'email_on_failure': False,
@@ -46,11 +46,11 @@ def verify_postgres_data():
     
     try:
         connection = psycopg2.connect(
-            host="postgres",
-            database="customer_analytics",
-            user="airflow",
-            password="airflow",
-            port="5432"
+            host=os.getenv("POSTGRES_HOST", "postgres"),
+            database=os.getenv("POSTGRES_ANALYTICS_DB", "customer_analytics"),
+            user=os.getenv("POSTGRES_USER", "pipeline"),
+            password=os.environ["POSTGRES_PASSWORD"],
+            port=os.getenv("POSTGRES_PORT", "5432"),
         )
         
         cursor = connection.cursor()
@@ -91,7 +91,7 @@ with DAG(
     'customer_data_pipeline',
     default_args=default_args,
     description='PySpark data pipeline for customer data',
-    schedule_interval=timedelta(days=1),
+    schedule=timedelta(days=1),
     catchup=False,
     tags=['pyspark', 'postgres', 'etl'],
 ) as dag:
